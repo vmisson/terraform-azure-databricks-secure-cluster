@@ -1,5 +1,5 @@
 locals {
-  prefix   = coalesce(var.prefix, random_string.prefix.result)
+  prefix = coalesce(var.prefix, random_string.prefix.result)
 }
 
 resource "random_string" "prefix" {
@@ -31,10 +31,10 @@ resource "azurerm_subnet" "subnet_public" {
 
     service_delegation {
       actions = [
-          "Microsoft.Network/virtualNetworks/subnets/join/action",
-          "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
-          "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action",
-        ]
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action",
+      ]
       name = "Microsoft.Databricks/workspaces"
     }
   }
@@ -51,10 +51,10 @@ resource "azurerm_subnet" "subnet_private" {
 
     service_delegation {
       actions = [
-          "Microsoft.Network/virtualNetworks/subnets/join/action",
-          "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
-          "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action",
-        ]
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+        "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action",
+        "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action",
+      ]
       name = "Microsoft.Databricks/workspaces"
     }
   }
@@ -78,8 +78,8 @@ resource "azurerm_subnet_network_security_group_association" "association_privat
 
 resource "azurerm_databricks_workspace" "databricks_workspace" {
   name                        = "${local.prefix}-${var.databricks_workspace_name}"
-  location            = azurerm_resource_group.resource_group.location
-  resource_group_name = azurerm_resource_group.resource_group.name
+  location                    = azurerm_resource_group.resource_group.location
+  resource_group_name         = azurerm_resource_group.resource_group.name
   sku                         = var.databricks_workspace_sku
   managed_resource_group_name = "${local.prefix}-managed-${var.resource_group_name}"
 
@@ -98,7 +98,7 @@ resource "azurerm_databricks_workspace" "databricks_workspace" {
 }
 
 resource "azurerm_private_endpoint" "databricks" {
-  count = var.private_endpoint_databricks_ui_api ? 1 : 0
+  count               = var.private_endpoint_databricks_ui_api ? 1 : 0
   name                = "${local.prefix}-databricks-pe"
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
@@ -118,7 +118,7 @@ resource "azurerm_private_endpoint" "databricks" {
 }
 
 resource "azurerm_private_endpoint" "auth" {
-  count = var.private_endpoint_browser_authentication ? 1 : 0
+  count               = var.private_endpoint_browser_authentication ? 1 : 0
   name                = "${local.prefix}-aadauthpe"
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name

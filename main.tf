@@ -11,12 +11,11 @@ resource "azurerm_virtual_network" "virtual_network" {
 }
 
 resource "azurerm_subnet" "subnet_private_endpoint" {
-  name                 = "private-endpoint-subnet"
-  resource_group_name  = azurerm_resource_group.resource_group.name
-  virtual_network_name = azurerm_virtual_network.virtual_network.name
-  address_prefixes     = ["10.250.0.0/24"]
-
-  private_endpoint_network_policies_enabled = false
+  name                              = "private-endpoint-subnet"
+  resource_group_name               = azurerm_resource_group.resource_group.name
+  virtual_network_name              = azurerm_virtual_network.virtual_network.name
+  address_prefixes                  = ["10.250.0.0/24"]
+  private_endpoint_network_policies = "Enabled"
 }
 
 resource "azurerm_virtual_network" "virtual_network_hub" {
@@ -72,9 +71,9 @@ resource "azurerm_windows_virtual_machine" "jumphost" {
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
 
-  size                = "Standard_D2s_v3"
-  admin_username      = var.username
-  admin_password      = random_password.password.result
+  size           = "Standard_D2s_v3"
+  admin_username = var.username
+  admin_password = random_password.password.result
   network_interface_ids = [
     azurerm_network_interface.jumphost_nic.id,
   ]
@@ -87,7 +86,7 @@ resource "azurerm_windows_virtual_machine" "jumphost" {
   source_image_reference {
     publisher = "microsoftwindowsdesktop"
     offer     = "windows-11"
-    sku       = "win11-21h2-pro"
+    sku       = "win11-24h2-pro"
     version   = "latest"
   }
 }
@@ -97,7 +96,7 @@ resource "azurerm_public_ip" "public_ip" {
   location            = azurerm_resource_group.resource_group.location
   resource_group_name = azurerm_resource_group.resource_group.name
   allocation_method   = "Static"
-  sku = "Standard"
+  sku                 = "Standard"
 }
 
 resource "azurerm_network_security_group" "network_nsg" {
@@ -125,7 +124,7 @@ resource "azurerm_subnet_network_security_group_association" "nsg_association" {
 
 resource "azurerm_private_dns_zone" "private_dns_zone_azuredatabricks" {
   name                = "privatelink.azuredatabricks.net"
-  resource_group_name  = azurerm_resource_group.resource_group.name
+  resource_group_name = azurerm_resource_group.resource_group.name
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "private_dns_zone_virtual_network_link" {
